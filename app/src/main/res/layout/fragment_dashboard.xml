@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.DashboardFragment">
+
+    <TextView
+        android:id="@+id/txt_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/starling_1p_savings_challenge"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_accountName"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="txt_accountName"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_heading" />
+
+    <org.fabiomsr.moneytextview.MoneyTextView
+        android:id="@+id/txt_accountBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        app:baseTextSize="20sp"
+        app:baseTextColor="@color/white"
+        app:decimalDigitsTextSize="14sp"
+        app:amount="@string/txt_savingsGoal_dummyAmount"
+        app:decimalSeparator="@string/currency_decimalSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txt_accountName"
+        app:symbol="@string/currency_symbol" />
+
+    <LinearLayout
+        android:id="@+id/layout_savingsGoals"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_accountName">
+
+    </LinearLayout>
+
+    <pl.pawelkleczkowski.customgauge.CustomGauge
+        android:id="@+id/dayProgressGuage"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_centerHorizontal="true"
+        app:gaugeDividerColor="@color/md_yellow_500"
+        app:gaugeDividerDrawFirst="false"
+        app:gaugeDividerDrawLast="true"
+        app:gaugeDividerSize="5"
+        app:gaugeDividerStep="12"
+        app:gaugeEndValue="365"
+        app:gaugePointEndColor="@color/md_green_500"
+        app:gaugePointStartColor="@color/md_red_500"
+        app:gaugeStartAngle="180"
+        app:gaugeStartValue="0"
+        app:gaugeStrokeCap="BUTT"
+        app:gaugeStrokeColor="@color/md_grey_400"
+        app:gaugeStrokeWidth="40dp"
+        app:gaugeSweepAngle="180"
+        app:layout_constraintEnd_toEndOf="@+id/layout_savingsGoals"
+        app:layout_constraintStart_toStartOf="@+id/txt_accountName"
+        app:layout_constraintTop_toBottomOf="@+id/layout_savingsGoals" />
+
+    <TextView
+        android:id="@+id/txt_dayProgressGuage"
+        android:layout_width="wrap_content"
+        android:layout_height="23dp"
+        android:layout_marginTop="-100dp"
+        android:layout_marginBottom="218dp"
+        android:fontFamily="monospace"
+        android:text="@string/day_x_of_365"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/dayProgressGuage"
+        app:layout_constraintEnd_toEndOf="@id/layout_savingsGoals"
+        app:layout_constraintStart_toStartOf="@+id/txt_accountName" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
