@@ -1,5 +1,9 @@
 package uk.co.droidinactu.pennychallenge.ui.dashboard;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,11 +22,12 @@ import androidx.room.Room;
 
 import org.fabiomsr.moneytextview.MoneyTextView;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Locale;
 
 import pl.pawelkleczkowski.customgauge.CustomGauge;
 import uk.co.droidinactu.pennychallenge.MainActivity;
@@ -33,6 +39,7 @@ import uk.co.droidinactu.pennychallenge.database.SavedOnDateDao;
 import uk.co.droidinactu.pennychallenge.starling.Account;
 import uk.co.droidinactu.pennychallenge.starling.AccountBalance;
 import uk.co.droidinactu.pennychallenge.starling.Accounts;
+import uk.co.droidinactu.pennychallenge.starling.CurrencyAndAmount;
 import uk.co.droidinactu.pennychallenge.starling.SavingsGoal;
 import uk.co.droidinactu.pennychallenge.starling.SavingsGoals;
 
@@ -41,10 +48,17 @@ import uk.co.droidinactu.pennychallenge.starling.SavingsGoals;
  */
 public class DashboardFragment extends Fragment {
 
+    public static final String PENNY_CHALLENGE = "PennyChallenge";
+
+    private static final String PRIMARY_CHANNEL_ID = "primary_notification_channel";
+    private static final int NOTIFICATION_ID = 0;
+
     private Account account;
+    private AccountBalance accountBalance;
     private AppDatabase db;
-    private ExecutorService executorService = Executors.newFixedThreadPool(4);
     private DashboardViewModel dashboardViewModel;
+
+    private NotificationManager mNotifyManager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,11 +66,17 @@ public class DashboardFragment extends Fragment {
                 new ViewModelProvider(this).get(DashboardViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        final TextView txt_accountName = root.findViewById(R.id.txt_accountName);
-        final MoneyTextView txt_accountBalance = root.findViewById(R.id.txt_accountBalance);
 
         db = Room.databaseBuilder(getActivity().getApplicationContext(),
                 AppDatabase.class, "saved-to-date").build();
+        setupDataRetrival(inflater, container, root);
+        updateDayProgress(root);
+        return root;
+    }
+
+    private void setupDataRetrival(LayoutInflater inflater, ViewGroup container, View root) {
+        final TextView txt_accountName = root.findViewById(R.id.txt_accountName);
+        final MoneyTextView txt_accountBalance = root.findViewById(R.id.txt_accountBalance);
 
         dashboardViewModel.getSavingsGoals().observe(getViewLifecycleOwner(), new Observer<SavingsGoals>() {
             @Override
@@ -64,6 +84,7 @@ public class DashboardFragment extends Fragment {
                 if (savingGoals != null) {
                     final LinearLayout sgLayout = root.findViewById(R.id.layout_savingsGoals);
                     sgLayout.removeAllViews();
+                    boolean pennyChallengeFound = false;
                     for (SavingsGoal s : savingGoals.getSavingsGoals()) {
                         View sgView = inflater.inflate(R.layout.savings_goal, container, false);
                         sgLayout.addView(sgView);
@@ -86,7 +107,8 @@ public class DashboardFragment extends Fragment {
                         String percentString = getString(R.string.txt_savingsGoal_savedPercent, savedPercent);
                         txt_savingsGoalPercentage.setText(percentString);
 
-                        if (sgFinal.getName().contains("enny")) {
+                        if (sgFinal.getName().contains(PENNY_CHALLENGE)) {
+                            pennyChallengeFound = true;
                             MyApplication myApp = (MyApplication) getActivity().getApplication();
                             myApp.getThreadPoolExecutor()
                                     .execute(new Runnable() {
@@ -97,6 +119,12 @@ public class DashboardFragment extends Fragment {
                                     });
                         }
                     }
+                    if (!pennyChallengeFound) {
+                        CurrencyAndAmount newTargetAmount = new CurrencyAndAmount();
+                        newTargetAmount.setCurrency(account.getCurrency());
+                        newTargetAmount.setMinorUnits(65000);
+                        dashboardViewModel.createSavingsGoal(account, PENNY_CHALLENGE, newTargetAmount);
+                    }
                 }
             }
         });
@@ -105,7 +133,8 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onChanged(@Nullable AccountBalance actBalance) {
                 if (actBalance != null) {
-                    float amountInPence = actBalance.getAmount().getMinorUnits() / 100;
+                    accountBalance = actBalance;
+                    float amountInPence = accountBalance.getEffectiveBalance().getMinorUnits() / 100;
                     txt_accountBalance.setAmount(amountInPence);
                 }
             }
@@ -116,7 +145,6 @@ public class DashboardFragment extends Fragment {
             public void onChanged(@Nullable Accounts accts) {
                 if (accts != null) {
                     for (Account a : accts.getAccounts()) {
-                        // FIXME : do something with accounts
                         account = a;
                         dashboardViewModel.loadAccountBalance(a);
                         dashboardViewModel.loadSavingsGoals(a);
@@ -126,8 +154,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        updateDayProgress(root);
-        return root;
+
     }
 
     /**
@@ -173,9 +200,46 @@ public class DashboardFragment extends Fragment {
         }
         if (amountToSave > 0) {
             Log.v(MainActivity.TAG, "DashboardFragment::makePennyPayments() saving [" + amountToSave + "] pence");
-            dashboardViewModel.addMoneyToSavingsGoal(account, savingsGoal, amountToSave);
+            if (accountBalance.getEffectiveBalance().getMinorUnits() < amountToSave) {
+                Log.e(MainActivity.TAG, "DashboardFragment::makePennyPayments() penny savings up to date");
+            } else {
+                dashboardViewModel.addMoneyToSavingsGoal(account, savingsGoal, amountToSave);
+                sendNotification(amountToSave);
+            }
         } else {
             Log.v(MainActivity.TAG, "DashboardFragment::makePennyPayments() penny savings up to date");
+        }
+    }
+
+    private void sendNotification(int amountSaved) {
+        Currency ukCurrency = Currency.getInstance(Locale.UK);
+        NumberFormat ukCurrencyFormat = NumberFormat.getCurrencyInstance(Locale.UK);
+        float amountFloat = Float.valueOf(amountSaved / 100.0f);
+        String amountStr = ukCurrencyFormat.format(amountFloat);
+        String notificationStr = String.format("You've saved another %s!", amountStr);
+
+        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getContext(), PRIMARY_CHANNEL_ID)
+                .setContentTitle("Penny Savings Challenge")
+                .setContentText(notificationStr)
+                .setTimeoutAfter(600000)
+                .setSmallIcon(R.drawable.ic_dashboard_black_24dp);
+        mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+    }
+
+
+    public void createNotificationChannel() {
+        mNotifyManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.O) {
+            // Create a NotificationChannel
+            NotificationChannel notificationChannel = new NotificationChannel(PRIMARY_CHANNEL_ID,
+                    "Penny Savings Notification", NotificationManager
+                    .IMPORTANCE_HIGH);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.MAGENTA);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setDescription("Notification from Mascot");
+            mNotifyManager.createNotificationChannel(notificationChannel);
         }
     }
 
@@ -183,6 +247,7 @@ public class DashboardFragment extends Fragment {
     public void onStart() {
         Log.v(MainActivity.TAG, "DashboardFragment::onStart()");
         super.onStart();
+        createNotificationChannel();
     }
 
     @Override

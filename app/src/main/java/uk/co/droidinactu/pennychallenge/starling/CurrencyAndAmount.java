@@ -10,6 +10,6 @@ import lombok.Data;
  */
 @Data
 public class CurrencyAndAmount {
-    private String currency;
-    private float minorUnits;
+    private String currency = "GBP";
+    private float minorUnits = 0;
 }

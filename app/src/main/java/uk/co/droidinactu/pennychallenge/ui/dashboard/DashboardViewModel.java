@@ -63,6 +63,7 @@ public class DashboardViewModel extends AndroidViewModel {
     private final String GET_ACCOUNT_BALANCE_URL = "/api/v2/accounts/%s/balance";
     private final String GET_SAVINGS_GOALS_URL = "/api/v2/account/%s/savings-goals";
     private final String ADD_TO_SAVINGS_GOALS_URL = "/api/v2/account/%s/savings-goals/%s/add-money/%s";
+    private final String CREATE_SAVINGS_GOALS_URL = "/api/v2/account/%s/savings-goals";
 
     private String apiDomainUrl;
     private String accessToken;
@@ -484,15 +485,59 @@ public class DashboardViewModel extends AndroidViewModel {
             public byte[] getBody() {
                 return requestBody == null ? null : requestBody.getBytes(StandardCharsets.UTF_8);
             }
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
 
-//            //Pass Your Parameters here
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("User", UserName);
-//                params.put("Pass", PassWord);
-//                return params;
-//            }
+    public void createSavingsGoal(Account account, String savingsGoalName, CurrencyAndAmount targetAmount) {
+        Log.v(MainActivity.TAG, "createSavingsGoal(" + savingsGoalName + ")");
+
+        String url = this.apiDomainUrl + new Formatter().format(
+                CREATE_SAVINGS_GOALS_URL,
+                account.getAccountUid()
+        );
+
+        JSONObject jsonBody = new JSONObject();
+        try {
+            JSONObject jsonBodyTrgt = new JSONObject();
+            jsonBodyTrgt.put("currency", targetAmount.getCurrency());
+            jsonBodyTrgt.put("minorUnits", targetAmount.getMinorUnits());
+
+            jsonBody.put("currency", targetAmount.getCurrency());
+            jsonBody.put("name", savingsGoalName);
+            jsonBody.put("target", jsonBodyTrgt);
+        } catch (JSONException e) {
+            Log.v(MainActivity.TAG, "addMoneyToSavingsGoal() creating body " + e.toString());
+        }
+        final String requestBody = jsonBody.toString();
+
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                null,
+                response -> {
+                    Log.v(MainActivity.TAG, "onResponse() " + response.toString());
+                    JSONObject jsonObj = response;
+                    readSavingsGoals(account);
+                }, error -> {
+            Log.v(MainActivity.TAG, "onErrorResponse() " + error.toString());
+            //   Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getRequestHeaders();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return requestBody == null ? null : requestBody.getBytes(StandardCharsets.UTF_8);
+            }
         };
         requestQueue.add(jsonArrayRequest);
     }
@@ -504,5 +549,4 @@ public class DashboardViewModel extends AndroidViewModel {
         params.put("Authorization", String.format("Bearer %s", accessToken));
         return params;
     }
-
 }
