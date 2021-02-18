@@ -26,4 +26,7 @@ public class SavingsGoal {
     private CurrencyAndAmount target;
     private CurrencyAndAmount totalSaved;
 
+    public SavingsGoal(String pennyChallenge) {
+        this.name = pennyChallenge;
+    }
 }

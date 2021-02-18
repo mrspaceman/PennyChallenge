@@ -41,14 +41,20 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import uk.co.droidinactu.pennychallenge.MainActivity;
+import uk.co.droidinactu.pennychallenge.PennySavingsWorker;
+import uk.co.droidinactu.pennychallenge.database.SavedOnDate;
+import uk.co.droidinactu.pennychallenge.database.SavedOnDateDao;
 import uk.co.droidinactu.pennychallenge.starling.Account;
 import uk.co.droidinactu.pennychallenge.starling.AccountBalance;
 import uk.co.droidinactu.pennychallenge.starling.Accounts;
@@ -58,12 +64,6 @@ import uk.co.droidinactu.pennychallenge.starling.SavingsGoals;
 import uk.co.droidinactu.pennychallenge.starling.Secrets;
 
 public class DashboardViewModel extends AndroidViewModel {
-
-    private final String GET_ACCOUNTS_URL = "/api/v2/accounts";
-    private final String GET_ACCOUNT_BALANCE_URL = "/api/v2/accounts/%s/balance";
-    private final String GET_SAVINGS_GOALS_URL = "/api/v2/account/%s/savings-goals";
-    private final String ADD_TO_SAVINGS_GOALS_URL = "/api/v2/account/%s/savings-goals/%s/add-money/%s";
-    private final String CREATE_SAVINGS_GOALS_URL = "/api/v2/account/%s/savings-goals";
 
     private String apiDomainUrl;
     private String accessToken;
@@ -250,6 +250,40 @@ public class DashboardViewModel extends AndroidViewModel {
         return starlingSavingsGoals;
     }
 
+    public void addMoneyToSavingsGoal(Account account, SavingsGoal savingsGoal, AccountBalance accountBalance, SavedOnDateDao savedOnDateDao) {
+        Log.v(MainActivity.TAG, "DashboardViewModel::loadSavingsGoals()");
+
+        Calendar cal = Calendar.getInstance();
+        int dayNumber = cal.get(Calendar.DAY_OF_YEAR);
+        LocalDate startOfYear = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+
+        List<SavedOnDate> dates = savedOnDateDao.getAll();
+
+        int amountToSave = 0;
+        for (int x = 1; x <= dayNumber; x++) {
+            LocalDate dateToCheck = startOfYear.plusDays(x - 1);
+            List<SavedOnDate> saved = savedOnDateDao.get(dateToCheck);
+            if (saved.size() == 0) {
+                amountToSave += x;
+                SavedOnDate sod = new SavedOnDate();
+                sod.dateSaved = dateToCheck;
+                sod.amount = x;
+                savedOnDateDao.insertAll(sod);
+            }
+        }
+        if (amountToSave > 0) {
+            Log.v(MainActivity.TAG, "PennySavingsWorker::makePennyPayments() saving [" + amountToSave + "] pence");
+            if (accountBalance.getEffectiveBalance().getMinorUnits() < amountToSave) {
+                Log.e(MainActivity.TAG, "DashboardFragment::makePennyPayments() penny savings up to date");
+            } else {
+                sendMoneyToSavingsGoal(account, savingsGoal, amountToSave);
+                //     sendNotification(amountToSave);
+            }
+        } else {
+            Log.v(MainActivity.TAG, "PennySavingsWorker::makePennyPayments() penny savings up to date");
+        }
+    }
+
     public void addMoneyToSavingsGoal(Account account, SavingsGoal savingsGoal, int amount) {
         Log.v(MainActivity.TAG, "DashboardViewModel::loadSavingsGoals()");
         sendMoneyToSavingsGoal(account, savingsGoal, amount);
@@ -259,7 +293,7 @@ public class DashboardViewModel extends AndroidViewModel {
         Log.v(MainActivity.TAG, "getAccounts()");
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(
                 Request.Method.GET,
-                this.apiDomainUrl + GET_ACCOUNTS_URL,
+                this.apiDomainUrl + PennySavingsWorker.GET_ACCOUNTS_URL,
                 null,
                 response -> {
                     Log.v(MainActivity.TAG, "onResponse() " + response.toString());
@@ -284,7 +318,7 @@ public class DashboardViewModel extends AndroidViewModel {
 
         String url = this.apiDomainUrl
                 + new Formatter().format(
-                GET_SAVINGS_GOALS_URL,
+                PennySavingsWorker.GET_SAVINGS_GOALS_URL,
                 account.getAccountUid()
         ).toString();
 
@@ -293,11 +327,14 @@ public class DashboardViewModel extends AndroidViewModel {
                 url,
                 null,
                 response -> {
-                    Log.v(MainActivity.TAG, "onResponse() " + response.toString());
+                    Log.v(MainActivity.TAG, "readSavingsGoals()::onResponse() " + response.toString());
                     JSONObject jsonObj = response;
                     starlingSavingsGoals.setValue(parseSavingsGoals(jsonObj));
                 }, error -> {
             Log.v(MainActivity.TAG, "onErrorResponse() " + error.toString());
+            SavingsGoals sgls = new SavingsGoals();
+            sgls.addSavingsGoal(new SavingsGoal(PennySavingsWorker.PENNY_CHALLENGE));
+            starlingSavingsGoals.setValue(sgls);
             //   Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
         }) {
             @Override
@@ -313,7 +350,7 @@ public class DashboardViewModel extends AndroidViewModel {
 
         UUID transferUid = UUID.randomUUID();
         String url = this.apiDomainUrl + new Formatter().format(
-                GET_ACCOUNT_BALANCE_URL,
+                PennySavingsWorker.GET_ACCOUNT_BALANCE_URL,
                 account.getAccountUid()
         );
 
@@ -370,16 +407,18 @@ public class DashboardViewModel extends AndroidViewModel {
             for (int x = 0; x < jsonObjs.length(); x++) {
                 JSONObject sgObj = jsonObjs.getJSONObject(x);
 
-                SavingsGoal savingsGoal = new SavingsGoal();
+                SavingsGoal savingsGoal = new SavingsGoal(sgObj.getString("name"));
                 savingsGoal.setSavingsGoalUid(sgObj.getString("savingsGoalUid"));
-                savingsGoal.setName(sgObj.getString("name"));
-                savingsGoal.setSavedPercentage(sgObj.getInt("savedPercentage"));
-
-                JSONObject sgTrgtObj = sgObj.getJSONObject("target");
-                CurrencyAndAmount target = new CurrencyAndAmount();
-                target.setCurrency(sgTrgtObj.getString("currency"));
-                target.setMinorUnits(sgTrgtObj.getInt("minorUnits"));
-                savingsGoal.setTarget(target);
+                if (sgObj.has("savedPercentage")) {
+                    savingsGoal.setSavedPercentage(sgObj.getInt("savedPercentage"));
+                }
+                if (sgObj.has("target")) {
+                    JSONObject sgTrgtObj = sgObj.getJSONObject("target");
+                    CurrencyAndAmount target = new CurrencyAndAmount();
+                    target.setCurrency(sgTrgtObj.getString("currency"));
+                    target.setMinorUnits(sgTrgtObj.getInt("minorUnits"));
+                    savingsGoal.setTarget(target);
+                }
 
                 JSONObject sgTotSvdObj = sgObj.getJSONObject("totalSaved");
                 CurrencyAndAmount totalSaved = new CurrencyAndAmount();
@@ -440,7 +479,7 @@ public class DashboardViewModel extends AndroidViewModel {
 
         UUID transferUid = UUID.randomUUID();
         String url = this.apiDomainUrl + new Formatter().format(
-                ADD_TO_SAVINGS_GOALS_URL,
+                PennySavingsWorker.ADD_TO_SAVINGS_GOALS_URL,
                 account.getAccountUid(),
                 savingsGoal.getSavingsGoalUid(),
                 transferUid
@@ -493,7 +532,7 @@ public class DashboardViewModel extends AndroidViewModel {
         Log.v(MainActivity.TAG, "createSavingsGoal(" + savingsGoalName + ")");
 
         String url = this.apiDomainUrl + new Formatter().format(
-                CREATE_SAVINGS_GOALS_URL,
+                PennySavingsWorker.CREATE_SAVINGS_GOALS_URL,
                 account.getAccountUid()
         );
 
