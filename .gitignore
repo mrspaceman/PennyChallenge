@@ -20,3 +20,4 @@ service-calls.rest
 /build
 /src/main/assets/keys
 /.idea/httpRequests/
+/http-client.env.json

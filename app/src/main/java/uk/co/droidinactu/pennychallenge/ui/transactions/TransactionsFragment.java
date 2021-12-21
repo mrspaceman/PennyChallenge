@@ -72,7 +72,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
   }
 
   private void setupDataRetrieval(LayoutInflater inflater, ViewGroup container, View root) {
-    Log.v(MainActivity.TAG, "DashboardFragment::setupDataRetrieval()");
+    Log.v(MainActivity.TAG, "TransactionsFragment::setupDataRetrieval()");
     final TextView txt_accountName = root.findViewById(R.id.txt_accountName);
     final MoneyTextView txt_accountBalance = root.findViewById(R.id.txt_accountBalance);
 
@@ -98,7 +98,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 tLayout.removeAllViews();
                 Log.v(
                     MainActivity.TAG,
-                    "DashboardFragment::setupDataRetrieval() - transactions.size() = ");
+                    "TransactionsFragment::setupDataRetrieval() - transactions.size() = ");
                 for (Transaction t : transactions.getFeedItems()) {
                   View sgView = inflater.inflate(R.layout.transaction, container, false);
                   tLayout.addView(sgView);
@@ -162,14 +162,14 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
 
   @Override
   public void onStart() {
-    Log.v(MainActivity.TAG, "DashboardFragment::onStart()");
+    Log.v(MainActivity.TAG, "TransactionsFragment::onStart()");
     super.onStart();
     createNotificationChannel();
   }
 
   @Override
   public void onResume() {
-    Log.v(MainActivity.TAG, "DashboardFragment::onResume()");
+    Log.v(MainActivity.TAG, "TransactionsFragment::onResume()");
     super.onResume();
   }
 
@@ -180,7 +180,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
    */
   @Override
   public void onClick(View v) {
-    Log.v(MainActivity.TAG, "DashboardFragment::onClick()");
+    Log.v(MainActivity.TAG, "TransactionsFragment::onClick()");
 
     if (v == btnToDatePicker) {
       LocalDate now = LocalDate.now();
