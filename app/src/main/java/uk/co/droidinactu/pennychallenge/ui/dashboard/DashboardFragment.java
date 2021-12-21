@@ -145,6 +145,8 @@ public class DashboardFragment extends Fragment {
                 accountBalance = actBalance;
                 float amountInPence = accountBalance.getEffectiveBalance().getMinorUnits() / 100;
                 txt_accountBalance.setAmount(amountInPence);
+                dashboardViewModel.loadSavingsGoals(
+                    dashboardViewModel.getAccounts().getValue().getAccounts().get(0));
               }
             });
 
@@ -157,7 +159,6 @@ public class DashboardFragment extends Fragment {
                 for (Account a : accts.getAccounts()) {
                   account = a;
                   dashboardViewModel.loadAccountBalance(a);
-                  dashboardViewModel.loadSavingsGoals(a);
                   dashboardViewModel.loadTransactions(a);
                   txt_accountName.setText(a.getName());
                 }

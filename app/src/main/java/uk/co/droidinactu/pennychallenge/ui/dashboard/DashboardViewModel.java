@@ -486,12 +486,15 @@ public class DashboardViewModel extends AndroidViewModel {
                 .transactingApplicationUserUid(sgObj.getString("transactingApplicationUserUid"))
                 .counterPartyType(sgObj.getString("counterPartyType"))
                 .counterPartyName(sgObj.getString("counterPartyName"))
-                .counterPartySubEntityUid(sgObj.getString("counterPartySubEntityUid"))
-                .counterPartySubEntityName(sgObj.getString("counterPartySubEntityName"))
-                .counterPartySubEntityIdentifier(sgObj.getString("counterPartySubEntityIdentifier"))
-                .counterPartySubEntitySubIdentifier(
-                    sgObj.getString("counterPartySubEntitySubIdentifier"))
-                .reference(sgObj.getString("reference"))
+                //
+                // .counterPartySubEntityUid(sgObj.getString("counterPartySubEntityUid"))
+                //
+                // .counterPartySubEntityName(sgObj.getString("counterPartySubEntityName"))
+                //
+                // .counterPartySubEntityIdentifier(sgObj.getString("counterPartySubEntityIdentifier"))
+                //                .counterPartySubEntitySubIdentifier(
+                //                    sgObj.getString("counterPartySubEntitySubIdentifier"))
+                //                .reference(sgObj.getString("reference"))
                 .country(sgObj.getString("country"))
                 .spendingCategory(sgObj.getString("spendingCategory"))
                 .hasAttachment(sgObj.getString("hasAttachment"))
@@ -499,7 +502,7 @@ public class DashboardViewModel extends AndroidViewModel {
                 .build();
 
         if (sgObj.has("amount")) {
-          JSONObject sgTrgtObj = sgObj.getJSONObject("target");
+          JSONObject sgTrgtObj = sgObj.getJSONObject("amount");
           CurrencyAndAmount target = new CurrencyAndAmount();
           target.setCurrency(sgTrgtObj.getString("currency"));
           target.setMinorUnits(sgTrgtObj.getInt("minorUnits"));
