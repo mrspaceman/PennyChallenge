@@ -159,7 +159,6 @@ public class DashboardFragment extends Fragment {
                 for (Account a : accts.getAccounts()) {
                   account = a;
                   dashboardViewModel.loadAccountBalance(a);
-                  dashboardViewModel.loadTransactions(a);
                   txt_accountName.setText(a.getName());
                 }
               }

@@ -191,9 +191,9 @@ public class DashboardViewModel extends AndroidViewModel {
     readSavingsGoals(account);
   }
 
-  public void loadTransactions(Account account) {
+  public void loadTransactions(Account account, LocalDateTime fromDate, LocalDateTime toDate) {
     Log.v(MainActivity.TAG, "DashboardViewModel::loadTransactions()");
-    readTransactions(account);
+    readTransactions(account, fromDate, toDate);
   }
 
   private Secrets getSecrets(Context context) throws IOException {
@@ -333,11 +333,8 @@ public class DashboardViewModel extends AndroidViewModel {
     requestQueue.add(jsonArrayRequest);
   }
 
-  private void readTransactions(Account account) {
+  private void readTransactions(Account account, LocalDateTime fromDate, LocalDateTime toDate) {
     Log.v(MainActivity.TAG, "readTransactions()");
-
-    LocalDateTime fromDate = LocalDateTime.now().minusDays(7);
-    LocalDateTime toDate = LocalDateTime.now();
 
     String url =
         this.apiDomainUrl
@@ -480,26 +477,54 @@ public class DashboardViewModel extends AndroidViewModel {
                 .direction(sgObj.getString("direction"))
                 .updatedAt(sgObj.getString("updatedAt"))
                 .transactionTime(sgObj.getString("transactionTime"))
-                .settlementTime(sgObj.getString("settlementTime"))
-                .source(sgObj.getString("source"))
-                .status(sgObj.getString("status"))
-                .transactingApplicationUserUid(sgObj.getString("transactingApplicationUserUid"))
-                .counterPartyType(sgObj.getString("counterPartyType"))
-                .counterPartyName(sgObj.getString("counterPartyName"))
-                //
-                // .counterPartySubEntityUid(sgObj.getString("counterPartySubEntityUid"))
-                //
-                // .counterPartySubEntityName(sgObj.getString("counterPartySubEntityName"))
-                //
-                // .counterPartySubEntityIdentifier(sgObj.getString("counterPartySubEntityIdentifier"))
-                //                .counterPartySubEntitySubIdentifier(
-                //                    sgObj.getString("counterPartySubEntitySubIdentifier"))
-                //                .reference(sgObj.getString("reference"))
                 .country(sgObj.getString("country"))
                 .spendingCategory(sgObj.getString("spendingCategory"))
                 .hasAttachment(sgObj.getString("hasAttachment"))
                 .hasReceipt(sgObj.getString("hasReceipt"))
                 .build();
+
+        List<String> optionalFields =
+            Arrays.asList(
+                "settlementTime",
+                "source",
+                "status",
+                "transactingApplicationUserUid",
+                "counterPartyType",
+                "counterPartyName",
+                "counterPartySubEntityUid",
+                "counterPartySubEntityName",
+                "counterPartySubEntityIdentifier",
+                "counterPartySubEntitySubIdentifier",
+                "reference");
+        for (String of : optionalFields) {
+          if (sgObj.has(of)) {
+            if ("settlementTime".equals(of)) {
+              transaction.setSettlementTime(sgObj.getString("settlementTime"));
+            } else if ("source".equals(of)) {
+              transaction.setSource(sgObj.getString("source"));
+            } else if ("status".equals(of)) {
+              transaction.setStatus(sgObj.getString("status"));
+            } else if ("transactingApplicationUserUid".equals(of)) {
+              transaction.setTransactingApplicationUserUid(
+                  sgObj.getString("transactingApplicationUserUid"));
+            } else if ("counterPartyType".equals(of)) {
+              transaction.setCounterPartyType(sgObj.getString("counterPartyType"));
+            } else if ("counterPartyName".equals(of)) {
+              transaction.setCounterPartyName(sgObj.getString("counterPartyName"));
+            } else if ("counterPartySubEntityUid".equals(of)) {
+              transaction.setCounterPartySubEntityUid(sgObj.getString("counterPartySubEntityUid"));
+            } else if ("counterPartySubEntityName".equals(of)) {
+              transaction.setCounterPartySubEntityName(
+                  sgObj.getString("counterPartySubEntityName"));
+            } else if ("counterPartySubEntityIdentifier".equals(of)) {
+              transaction.setCounterPartySubEntityIdentifier(
+                  sgObj.getString("counterPartySubEntityIdentifier"));
+            } else if ("counterPartySubEntitySubIdentifier".equals(of)) {
+              transaction.setCounterPartySubEntitySubIdentifier(
+                  sgObj.getString("counterPartySubEntitySubIdentifier"));
+            }
+          }
+        }
 
         if (sgObj.has("amount")) {
           JSONObject sgTrgtObj = sgObj.getJSONObject("amount");

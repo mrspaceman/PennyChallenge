@@ -26,6 +26,7 @@ import uk.co.droidinactu.pennychallenge.ui.dashboard.DashboardViewModel;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -44,6 +45,9 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
   private EditText txtFromDate;
   private Button btnToDatePicker;
   private EditText txtToDate;
+  private Button btnRoundup;
+  private LocalDateTime fromDate;
+  private LocalDateTime toDate;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
 
     View root = inflater.inflate(R.layout.fragment_transactions, container, false);
 
+    btnRoundup = (Button) root.findViewById(R.id.btn_roundUp);
     btnFromDatePicker = (Button) root.findViewById(R.id.btn_fromDate);
     txtFromDate = (EditText) root.findViewById(R.id.from_date);
 
@@ -60,12 +65,12 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
     btnFromDatePicker.setOnClickListener(this);
     btnToDatePicker.setOnClickListener(this);
 
-    LocalDate lastWeek = LocalDate.now().minus(7, java.time.temporal.ChronoUnit.DAYS);
+    fromDate = LocalDateTime.now().minus(7, java.time.temporal.ChronoUnit.DAYS);
     txtFromDate.setText(
-        lastWeek.getDayOfMonth() + " " + lastWeek.getMonth() + " " + lastWeek.getYear());
+        fromDate.getDayOfMonth() + " " + fromDate.getMonth() + " " + fromDate.getYear());
 
-    LocalDate now = LocalDate.now();
-    txtToDate.setText(now.getDayOfMonth() + " " + now.getMonth() + " " + now.getYear());
+    toDate = LocalDateTime.now();
+    txtToDate.setText(toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
 
     setupDataRetrieval(inflater, container, root);
     return root;
@@ -123,7 +128,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 for (Account a : accts.getAccounts()) {
                   account = a;
                   dashboardViewModel.loadAccountBalance(a);
-                  dashboardViewModel.loadTransactions(a);
+                  dashboardViewModel.loadTransactions(a, fromDate, toDate);
                   txt_accountName.setText(a.getName());
                 }
               }
@@ -180,9 +185,27 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
    */
   @Override
   public void onClick(View v) {
-    Log.v(MainActivity.TAG, "TransactionsFragment::onClick()");
-
     if (v == btnToDatePicker) {
+      Log.d(MainActivity.TAG, "TransactionsFragment::onClick() - btnToDatePicker");
+
+      DatePickerDialog datePickerDialog =
+          new DatePickerDialog(
+              this.getContext(),
+              new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                  toDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                  txtToDate.setText(
+                      toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
+                  dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                }
+              },
+              toDate.getYear(),
+              toDate.getMonthValue(),
+              toDate.getDayOfMonth());
+      datePickerDialog.show();
+    } else if (v == btnFromDatePicker) {
+      Log.d(MainActivity.TAG, "TransactionsFragment::onClick() - btnFromDatePicker");
       LocalDate now = LocalDate.now();
 
       DatePickerDialog datePickerDialog =
@@ -191,13 +214,24 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
               new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  txtFromDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                  fromDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                  txtFromDate.setText(
+                      fromDate.getDayOfMonth()
+                          + " "
+                          + fromDate.getMonth()
+                          + " "
+                          + fromDate.getYear());
+                  dashboardViewModel.loadTransactions(account, fromDate, toDate);
                 }
               },
               now.getYear(),
               now.getMonthValue(),
               now.getDayOfMonth());
       datePickerDialog.show();
+      datePickerDialog.show();
+    } else if (v == btnRoundup) {
+      // FIXME : do roundups
+      Log.d(MainActivity.TAG, "TransactionsFragment::onClick() - btnRoundup");
     }
   }
 }
