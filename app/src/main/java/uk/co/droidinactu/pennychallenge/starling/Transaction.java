@@ -3,6 +3,8 @@ package uk.co.droidinactu.pennychallenge.starling;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * { "feedItemUid": "uid", "categoryUid": "uid", "amount": { "currency": "GBP", "minorUnits": 1135 *
  * }, "sourceAmount": { "currency": "GBP", "minorUnits": 1135 }, "direction": "OUT", "updatedAt": *
@@ -22,8 +24,8 @@ public class Transaction {
   CurrencyAndAmount amount;
   CurrencyAndAmount sourceAmount;
   String direction;
-  String updatedAt;
-  String transactionTime;
+  LocalDateTime updatedAt;
+  LocalDateTime transactionTime;
   String settlementTime;
   String source;
   String status;

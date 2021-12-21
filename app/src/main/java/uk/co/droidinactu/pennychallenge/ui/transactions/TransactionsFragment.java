@@ -48,12 +48,15 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
   private Button btnRoundup;
   private LocalDateTime fromDate;
   private LocalDateTime toDate;
+  private LinearLayout tLayout;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
     View root = inflater.inflate(R.layout.fragment_transactions, container, false);
+
+    tLayout = (LinearLayout) root.findViewById(R.id.layout_transactions);
 
     btnRoundup = (Button) root.findViewById(R.id.btn_roundUp);
     btnFromDatePicker = (Button) root.findViewById(R.id.btn_fromDate);
@@ -99,11 +102,10 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
             getViewLifecycleOwner(),
             transactions -> {
               if (transactions != null) {
-                final LinearLayout tLayout = root.findViewById(R.id.layout_transactions);
                 tLayout.removeAllViews();
                 Log.v(
                     MainActivity.TAG,
-                    "TransactionsFragment::setupDataRetrieval() - transactions.size() = ");
+                    "TransactionsFragment::setupDataRetrieval() populate transactions list");
                 for (Transaction t : transactions.getFeedItems()) {
                   View sgView = inflater.inflate(R.layout.transaction, container, false);
                   tLayout.addView(sgView);
@@ -113,7 +115,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                   final MoneyTextView txt_transactionBalance =
                       sgView.findViewById(R.id.txt_transactionBalance);
 
-                  txt_transactionDate.setText(t.getUpdatedAt().toString());
+                  txt_transactionDate.setText(t.getUpdatedAt().toLocalDate().toString());
                   txt_transactionBalance.setAmount(t.getAmount().getMinorUnits() / 100);
                 }
               }
@@ -197,7 +199,11 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                   toDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
                   txtToDate.setText(
                       toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
-                  dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                  if (fromDate.isBefore(toDate)) {
+                    dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                  } else {
+                    tLayout.removeAllViews();
+                  }
                 }
               },
               toDate.getYear(),
@@ -221,7 +227,11 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                           + fromDate.getMonth()
                           + " "
                           + fromDate.getYear());
-                  dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                  if (fromDate.isBefore(toDate)) {
+                    dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                  } else {
+                    tLayout.removeAllViews();
+                  }
                 }
               },
               now.getYear(),

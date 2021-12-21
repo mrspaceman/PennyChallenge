@@ -30,6 +30,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DashboardViewModel extends AndroidViewModel {
@@ -235,7 +236,7 @@ public class DashboardViewModel extends AndroidViewModel {
       SavingsGoal savingsGoal,
       AccountBalance accountBalance,
       SavedOnDateDao savedOnDateDao) {
-    Log.v(MainActivity.TAG, "DashboardViewModel::loadSavingsGoals()");
+    Log.v(MainActivity.TAG, "DashboardViewModel::addMoneyToSavingsGoal()");
 
     Calendar cal = Calendar.getInstance();
     int dayNumber = cal.get(Calendar.DAY_OF_YEAR);
@@ -271,12 +272,12 @@ public class DashboardViewModel extends AndroidViewModel {
   }
 
   public void addMoneyToSavingsGoal(Account account, SavingsGoal savingsGoal, int amount) {
-    Log.v(MainActivity.TAG, "DashboardViewModel::loadSavingsGoals()");
+    Log.v(MainActivity.TAG, "DashboardViewModel::addMoneyToSavingsGoal()");
     sendMoneyToSavingsGoal(account, savingsGoal, amount);
   }
 
   private void readAccounts() {
-    Log.v(MainActivity.TAG, "readAccounts()");
+    Log.v(MainActivity.TAG, "DashboardViewModel::readAccounts()");
     JsonObjectRequest jsonArrayRequest =
         new JsonObjectRequest(
             Request.Method.GET,
@@ -301,7 +302,7 @@ public class DashboardViewModel extends AndroidViewModel {
   }
 
   private void readSavingsGoals(Account account) {
-    Log.v(MainActivity.TAG, "readSavingsGoals()");
+    Log.v(MainActivity.TAG, "DashboardViewModel::readSavingsGoals()");
 
     String url =
         this.apiDomainUrl
@@ -334,7 +335,7 @@ public class DashboardViewModel extends AndroidViewModel {
   }
 
   private void readTransactions(Account account, LocalDateTime fromDate, LocalDateTime toDate) {
-    Log.v(MainActivity.TAG, "readTransactions()");
+    Log.v(MainActivity.TAG, "DashboardViewModel::readTransactions()");
 
     String url =
         this.apiDomainUrl
@@ -350,6 +351,7 @@ public class DashboardViewModel extends AndroidViewModel {
             + "&maxTransactionTimestamp="
             + toDate.toString()
             + "Z";
+    Log.v(MainActivity.TAG, "DashboardViewModel::readTransactions() calling url [" + url + "]");
 
     JsonObjectRequest jsonArrayRequest =
         new JsonObjectRequest(
@@ -357,11 +359,15 @@ public class DashboardViewModel extends AndroidViewModel {
             url,
             null,
             response -> {
-              Log.v(MainActivity.TAG, "readTransactions()::onResponse() " + response.toString());
+              Log.v(
+                  MainActivity.TAG,
+                  "DashboardViewModel::readTransactions()::onResponse() " + response.toString());
               starlingTransactions.setValue(parseTransactions(response));
             },
             error -> {
-              Log.v(MainActivity.TAG, "readTransactions()::onErrorResponse() " + error.toString());
+              Log.v(
+                  MainActivity.TAG,
+                  "DashboardViewModel::readTransactions()::onErrorResponse() " + error.toString());
               //   Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
             }) {
           @Override
@@ -464,6 +470,7 @@ public class DashboardViewModel extends AndroidViewModel {
   }
 
   private Transactions parseTransactions(JSONObject jsonObj) {
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     Transactions transactions = new Transactions();
     try {
       JSONArray jsonObjs = jsonObj.getJSONArray("feedItems");
@@ -475,13 +482,15 @@ public class DashboardViewModel extends AndroidViewModel {
                 .feedItemUid(sgObj.getString("feedItemUid"))
                 .categoryUid(sgObj.getString("categoryUid"))
                 .direction(sgObj.getString("direction"))
-                .updatedAt(sgObj.getString("updatedAt"))
-                .transactionTime(sgObj.getString("transactionTime"))
                 .country(sgObj.getString("country"))
                 .spendingCategory(sgObj.getString("spendingCategory"))
                 .hasAttachment(sgObj.getString("hasAttachment"))
                 .hasReceipt(sgObj.getString("hasReceipt"))
                 .build();
+
+        transaction.setTransactionTime(
+            LocalDateTime.parse(sgObj.getString("transactionTime"), dtf));
+        transaction.setUpdatedAt(LocalDateTime.parse(sgObj.getString("updatedAt"), dtf));
 
         List<String> optionalFields =
             Arrays.asList(
