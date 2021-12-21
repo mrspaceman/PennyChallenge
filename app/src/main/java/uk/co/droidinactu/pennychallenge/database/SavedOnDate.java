@@ -8,10 +8,10 @@ import java.time.LocalDate;
 
 @Entity
 public class SavedOnDate {
-    @PrimaryKey
-    @ColumnInfo(name = "date_saved")
-    public LocalDate dateSaved;
+  @PrimaryKey
+  @ColumnInfo(name = "date_saved")
+  public LocalDate dateSaved;
 
-    @ColumnInfo(name = "amount_saved")
-    public int amount;
+  @ColumnInfo(name = "amount_saved")
+  public int amount;
 }

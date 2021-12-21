@@ -2,12 +2,9 @@ package uk.co.droidinactu.pennychallenge.starling;
 
 import lombok.Data;
 
-/**
- * String
- */
+/** String */
 @Data
 public class ProfileImage {
 
-    private String imageBytes;
-
+  private String imageBytes;
 }

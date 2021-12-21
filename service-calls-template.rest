@@ -1,0 +1,30 @@
+### Get accountList list
+GET https://{{hostname}}/api/v2/accounts
+Authorization: Bearer {{YOUR_PERSONAL_ACCESS_TOKEN}}
+Accept: application/json
+
+### get account balance
+GET https://{{hostname}}/api/v2/accounts/{{ACCOUNT_UID}}/balance
+Authorization: Bearer {{YOUR_PERSONAL_ACCESS_TOKEN}}
+Accept: application/json
+
+### get savings goals
+GET https://{{hostname}}/api/v2/account/{{ACCOUNT_UID}}/savings-goals
+Authorization: Bearer {{YOUR_PERSONAL_ACCESS_TOKEN}}
+Accept: application/json
+
+### create round up savings goal
+PUT https://{{hostname}}/api/v2/account/{{ACCOUNT_UID}}/savings-goals
+Authorization: Bearer {{YOUR_PERSONAL_ACCESS_TOKEN}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "RoundUps",
+  "currency": "GBP"
+}
+
+### get transactionList
+GET https://{{hostname}}/api/v2/feed/account/{{ACCOUNT_UID}}/category/<CATEGORY_UID>/transactions-between?minTransactionTimestamp=2021-12-01T00%3A00%3A00.000Z&maxTransactionTimestamp=2021-12-15T23%3A59%3A59.000Z
+Authorization: Bearer {{YOUR_PERSONAL_ACCESS_TOKEN}}
+Accept: application/json

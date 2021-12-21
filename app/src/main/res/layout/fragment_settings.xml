@@ -1,106 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsFragment">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   tools:context=".ui.settings.SettingsFragment">
 
     <TextView
-        android:id="@+id/txt_settings_productionApi_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Base URI"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_productionApi" />
+            android:id="@+id/txt_settings_productionApi_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Base URI"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_productionApi"/>
 
     <EditText
-        android:id="@+id/txt_settings_productionApi"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:text="https://api.starlingbank.com"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/txt_settings_productionApi"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:text="https://api.starlingbank.com"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/txt_settings_publicKeyUid_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Public Key UID"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_publicKeyUid" />
+            android:id="@+id/txt_settings_publicKeyUid_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Public Key UID"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_publicKeyUid"/>
 
     <EditText
-        android:id="@+id/txt_settings_publicKeyUid"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_settings_productionApi" />
+            android:id="@+id/txt_settings_publicKeyUid"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_settings_productionApi"/>
 
     <TextView
-        android:id="@+id/txt_settings_clientId_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Client Id"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_clientId" />
+            android:id="@+id/txt_settings_clientId_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Client Id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_clientId"/>
 
     <EditText
-        android:id="@+id/txt_settings_clientId"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_settings_publicKeyUid" />
+            android:id="@+id/txt_settings_clientId"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_settings_publicKeyUid"/>
 
     <TextView
-        android:id="@+id/txt_settings_clientSecret_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Client Secret"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_clientSecret" />
+            android:id="@+id/txt_settings_clientSecret_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Client Secret"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_clientSecret"/>
 
     <EditText
-        android:id="@+id/txt_settings_clientSecret"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_settings_clientId" />
+            android:id="@+id/txt_settings_clientSecret"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_settings_clientId"/>
 
     <TextView
-        android:id="@+id/txt_settings_cookieSecret_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Cookie Secret"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_cookieSecret" />
+            android:id="@+id/txt_settings_cookieSecret_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Cookie Secret"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_cookieSecret"/>
 
     <EditText
-        android:id="@+id/txt_settings_cookieSecret"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_settings_clientSecret" />
+            android:id="@+id/txt_settings_cookieSecret"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_settings_clientSecret"/>
 
     <TextView
-        android:id="@+id/txt_settings_personalAccessToken_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Personal Access Token"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_personalAccessToken" />
+            android:id="@+id/txt_settings_personalAccessToken_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Personal Access Token"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/txt_settings_personalAccessToken"/>
 
     <EditText
-        android:id="@+id/txt_settings_personalAccessToken"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_settings_cookieSecret" />
+            android:id="@+id/txt_settings_personalAccessToken"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_settings_cookieSecret"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

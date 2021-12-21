@@ -3,9 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Dropbox/projects/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/fragment_dashboard.xml" value="0.2591216216216216" />
+        <entry key="..\:/Dropbox/projects/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/balance_total.xml" value="0.6" />
+        <entry key="..\:/Dropbox/projects/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/fragment_dashboard.xml" value="0.8" />
+        <entry key="..\:/Dropbox/projects/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/savings_goal.xml" value="0.72" />
+        <entry key="..\:/src/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/activity_main.xml" value="0.296875" />
+        <entry key="..\:/src/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/fragment_settings.xml" value="0.296875" />
+        <entry key="..\:/src/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/fragment_transactions.xml" value="0.308974358974359" />
+        <entry key="..\:/src/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/savings_goal.xml" value="0.296875" />
+        <entry key="..\:/src/droidinactu.co.uk/PennyChallenge/app/src/main/res/layout/transaction.xml" value="0.1" />
+        <entry key="..\:/src/droidinactu.co.uk/PennyChallenge/app/src/main/res/menu/bottom_nav_menu.xml" value="0.519140625" />
       </map>
     </option>
+  </component>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
