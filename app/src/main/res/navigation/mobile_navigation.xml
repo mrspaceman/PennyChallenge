@@ -5,27 +5,27 @@
             android:id="@+id/mobile_navigation"
             app:startDestination="@+id/navigation_home">
 
-    <fragment
-            android:id="@+id/navigation_home"
-            android:name="uk.co.droidinactu.pennychallenge.ui.home.HomeFragment"
-            android:label="@string/title_home"
-            tools:layout="@layout/fragment_home"/>
+  <fragment
+      android:id="@+id/navigation_home"
+      android:name="uk.co.droidinactu.pennychallenge.ui.home.HomeFragment"
+      android:label="@string/title_home"
+      tools:layout="@layout/fragment_home"/>
 
-    <fragment
-            android:id="@+id/navigation_dashboard"
-            android:name="uk.co.droidinactu.pennychallenge.ui.dashboard.DashboardFragment"
-            android:label="@string/title_dashboard"
-            tools:layout="@layout/fragment_dashboard"/>
+  <fragment
+      android:id="@+id/navigation_dashboard"
+      android:name="uk.co.droidinactu.pennychallenge.ui.dashboard.DashboardFragment"
+      android:label="@string/title_dashboard"
+      tools:layout="@layout/fragment_dashboard"/>
 
-    <fragment
-            android:id="@+id/navigation_transactions"
-            android:name="uk.co.droidinactu.pennychallenge.ui.transactions.TransactionsFragment"
-            android:label="@string/title_transactions"
-            tools:layout="@layout/fragment_transactions"/>
+  <fragment
+      android:id="@+id/navigation_transactions"
+      android:name="uk.co.droidinactu.pennychallenge.ui.transactions.TransactionsFragment"
+      android:label="@string/title_transactions"
+      tools:layout="@layout/fragment_transactions"/>
 
-    <fragment
-            android:id="@+id/navigation_notifications"
-            android:name="uk.co.droidinactu.pennychallenge.ui.settings.SettingsFragment"
-            android:label="@string/title_notifications"
-            tools:layout="@layout/fragment_settings"/>
+  <fragment
+      android:id="@+id/navigation_notifications"
+      android:name="uk.co.droidinactu.pennychallenge.ui.settings.SettingsFragment"
+      android:label="@string/title_notifications"
+      tools:layout="@layout/fragment_settings"/>
 </navigation>

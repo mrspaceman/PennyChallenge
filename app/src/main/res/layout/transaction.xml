@@ -5,51 +5,51 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
-    <!-- A CardView that contains a TextView -->
-    <androidx.cardview.widget.CardView
-            android:id="@+id/card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            card_view:cardCornerRadius="4dp">
+  <!-- A CardView that contains a TextView -->
+  <androidx.cardview.widget.CardView
+      android:id="@+id/card_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      card_view:cardCornerRadius="4dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-            <TextView
-                    android:id="@+id/txt_transactionDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/txt_transactiondate"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-
-            <org.fabiomsr.moneytextview.MoneyTextView
-                    android:id="@+id/txt_transactionBalance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="@string/txt_transaction_dummyAmount"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textStyle="bold"
-                    app:baseTextColor="@color/white"
-                    app:decimalDigitsTextSize="14sp"
-                    app:decimalSeparator="@string/currency_decimalSeparator"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/txt_transactionDate"
-                    app:symbol="@string/currency_symbol"/>
+      <TextView
+          android:id="@+id/txt_transactionDate"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="10dp"
+          android:layout_marginTop="4dp"
+          android:layout_marginEnd="8dp"
+          android:layout_marginBottom="10dp"
+          android:text="@string/txt_transactiondate"
+          android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"/>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+      <org.fabiomsr.moneytextview.MoneyTextView
+          android:id="@+id/txt_transactionBalance"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="monospace"
+          android:text="@string/txt_transaction_dummyAmount"
+          android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+          android:textStyle="bold"
+          app:baseTextColor="@color/white"
+          app:decimalDigitsTextSize="14sp"
+          app:decimalSeparator="@string/currency_decimalSeparator"
+          android:layout_marginEnd="8dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@id/txt_transactionDate"
+          app:symbol="@string/currency_symbol"/>
 
-    </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.cardview.widget.CardView>
 
 </LinearLayout>

@@ -27,6 +27,7 @@ import uk.co.droidinactu.pennychallenge.ui.dashboard.DashboardViewModel;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -49,6 +50,9 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
   private LocalDateTime fromDate;
   private LocalDateTime toDate;
   private LinearLayout tLayout;
+  private MoneyTextView txt_accountBalance;
+  private TextView txt_accountName;
+  private Spinner spn_savingsGoals;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,11 +63,16 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
     tLayout = (LinearLayout) root.findViewById(R.id.layout_transactions);
 
     btnRoundup = (Button) root.findViewById(R.id.btn_roundUp);
+    btnRoundup.setTag("0.0");
     btnFromDatePicker = (Button) root.findViewById(R.id.btn_fromDate);
     txtFromDate = (EditText) root.findViewById(R.id.from_date);
 
     btnToDatePicker = (Button) root.findViewById(R.id.btn_toDate);
     txtToDate = (EditText) root.findViewById(R.id.to_date);
+
+    txt_accountName = root.findViewById(R.id.txt_accountName);
+    txt_accountBalance = root.findViewById(R.id.txt_accountBalance);
+    spn_savingsGoals = root.findViewById(R.id.spn_savingsGoals);
 
     btnFromDatePicker.setOnClickListener(this);
     btnToDatePicker.setOnClickListener(this);
@@ -81,8 +90,6 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
 
   private void setupDataRetrieval(LayoutInflater inflater, ViewGroup container, View root) {
     Log.v(MainActivity.TAG, "TransactionsFragment::setupDataRetrieval()");
-    final TextView txt_accountName = root.findViewById(R.id.txt_accountName);
-    final MoneyTextView txt_accountBalance = root.findViewById(R.id.txt_accountBalance);
 
     dashboardViewModel
         .getAccountBalance()
@@ -94,6 +101,12 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 float amountInPence = accountBalance.getEffectiveBalance().getMinorUnits() / 100;
                 txt_accountBalance.setAmount(amountInPence);
               }
+              if (Float.parseFloat(btnRoundup.getTag().toString()) <= txt_accountBalance.getAmount()
+                  && spn_savingsGoals.getAdapter().getCount() > 0) {
+                btnRoundup.setEnabled(true);
+              } else {
+                btnRoundup.setEnabled(false);
+              }
             });
 
     dashboardViewModel
@@ -102,7 +115,9 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
             getViewLifecycleOwner(),
             transactions -> {
               if (transactions != null) {
+                int roundUpAmount = 0;
                 tLayout.removeAllViews();
+                btnRoundup.setText(getString(R.string.btn_roundup));
                 Log.v(
                     MainActivity.TAG,
                     "TransactionsFragment::setupDataRetrieval() populate transactions list");
@@ -115,8 +130,18 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                   final MoneyTextView txt_transactionBalance =
                       sgView.findViewById(R.id.txt_transactionBalance);
 
+                  roundUpAmount += 100 - (t.getAmount().getMinorUnits() % 100);
+
                   txt_transactionDate.setText(t.getUpdatedAt().toLocalDate().toString());
                   txt_transactionBalance.setAmount(t.getAmount().getMinorUnits() / 100);
+                }
+                btnRoundup.setText(getString(R.string.btn_roundup) + (roundUpAmount / 100));
+                btnRoundup.setTag(roundUpAmount / 100);
+                if ((roundUpAmount / 100) <= txt_accountBalance.getAmount()
+                    && spn_savingsGoals.getAdapter().getCount() > 0) {
+                  btnRoundup.setEnabled(true);
+                } else {
+                  btnRoundup.setEnabled(false);
                 }
               }
             });
@@ -131,8 +156,36 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                   account = a;
                   dashboardViewModel.loadAccountBalance(a);
                   dashboardViewModel.loadTransactions(a, fromDate, toDate);
-                  txt_accountName.setText(a.getName());
+                  dashboardViewModel.loadSavingsGoals(a);
+                  txt_accountName.setText(a.getName() + " balance:");
                 }
+              }
+            });
+
+    dashboardViewModel
+        .getSavingsGoals()
+        .observe(
+            getViewLifecycleOwner(),
+            savingGoals -> {
+              if (savingGoals != null) {
+                ArrayList<String> savingsGoalNames = new ArrayList<>();
+                savingGoals
+                    .getSavingsGoals()
+                    .forEach(
+                        sg -> {
+                          savingsGoalNames.add(sg.getName());
+                        });
+                ArrayAdapter<String> adapter =
+                    new ArrayAdapter<String>(
+                        this.getContext(), android.R.layout.simple_spinner_item, savingsGoalNames);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spn_savingsGoals.setAdapter(adapter);
+              }
+              if (Float.parseFloat(btnRoundup.getTag().toString()) <= txt_accountBalance.getAmount()
+                  && spn_savingsGoals.getAdapter().getCount() > 0) {
+                btnRoundup.setEnabled(true);
+              } else {
+                btnRoundup.setEnabled(false);
               }
             });
   }
