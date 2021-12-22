@@ -26,8 +26,9 @@ import uk.co.droidinactu.pennychallenge.starling.SavingsGoal;
 import uk.co.droidinactu.pennychallenge.starling.Transaction;
 import uk.co.droidinactu.pennychallenge.ui.dashboard.DashboardViewModel;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -140,8 +141,12 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                   txt_transactionDate.setText(t.getUpdatedAt().toLocalDate().toString());
                   txt_transactionBalance.setAmount(t.getAmount().getMinorUnits() / 100);
                 }
-                btnRoundup.setText(getString(R.string.btn_roundup) + (roundUpAmount / 100));
-                btnRoundup.setTag(roundUpAmount / 100);
+                BigDecimal roundupDecimal =
+                    BigDecimal.valueOf(roundUpAmount)
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                btnRoundup.setText(
+                    getString(R.string.btn_roundup) + roundupDecimal.toPlainString());
+                btnRoundup.setTag(roundupDecimal);
                 if ((roundUpAmount / 100) <= txt_accountBalance.getAmount()
                     && spn_savingsGoals.getAdapter() != null
                     && spn_savingsGoals.getAdapter().getCount() > 0) {
@@ -258,7 +263,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
               new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  toDate = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
+                  toDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
                   txtToDate.setText(
                       toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
                   if (fromDate.isBefore(toDate)) {
@@ -271,20 +276,18 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 }
               },
               toDate.getYear(),
-              toDate.getMonthValue(),
+              toDate.getMonthValue() - 1,
               toDate.getDayOfMonth());
       datePickerDialog.show();
     } else if (v == btnFromDatePicker) {
       Log.d(MainActivity.TAG, "TransactionsFragment::onClick() - btnFromDatePicker");
-      LocalDate now = LocalDate.now();
-
       DatePickerDialog datePickerDialog =
           new DatePickerDialog(
               this.getContext(),
               new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  fromDate = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
+                  fromDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
                   txtFromDate.setText(
                       fromDate.getDayOfMonth()
                           + " "
@@ -300,9 +303,9 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                   }
                 }
               },
-              now.getYear(),
-              now.getMonthValue(),
-              now.getDayOfMonth());
+              fromDate.getYear(),
+              fromDate.getMonthValue() - 1,
+              fromDate.getDayOfMonth());
       datePickerDialog.show();
       datePickerDialog.show();
     } else if (v == btnRoundup) {
