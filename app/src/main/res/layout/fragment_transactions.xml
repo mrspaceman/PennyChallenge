@@ -1,108 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            tools:context=".ui.dashboard.DashboardFragment">
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fillViewport="true"
+  tools:context=".ui.dashboard.DashboardFragment">
 
   <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+      android:id="@+id/txt_heading"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="wrap_content"
+      android:text="@string/starling_1p_savings_challenge"
+      android:textAppearance="@style/TextAppearance.AppCompat.Large"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txt_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/starling_1p_savings_challenge"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/txt_accountName"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="txt_accountName"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_heading"/>
+      android:id="@+id/txt_accountName"
+      android:layout_width="wrap_content"
+      android:layout_height="24dp"
+      android:layout_marginStart="10dp"
+      android:layout_marginTop="10dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginBottom="10dp"
+      android:text="txt_accountName"
+      android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/txt_heading" />
 
     <org.fabiomsr.moneytextview.MoneyTextView
-        android:id="@+id/txt_accountBalance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        app:amount="@string/txt_savingsGoal_dummyAmount"
-        app:baseTextColor="@color/white"
-        app:baseTextSize="20sp"
-        app:decimalDigitsTextSize="14sp"
-        app:decimalSeparator="@string/currency_decimalSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txt_accountName"
-        app:symbol="@string/currency_symbol"/>
+      android:id="@+id/txt_accountBalance"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="10dp"
+      app:amount="@string/txt_savingsGoal_dummyAmount"
+      app:baseTextColor="@color/white"
+      app:baseTextSize="20sp"
+      app:decimalDigitsTextSize="14sp"
+      app:decimalSeparator="@string/currency_decimalSeparator"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="@id/txt_accountName"
+      app:symbol="@string/currency_symbol" />
 
     <EditText
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/from_date"
-        android:layout_marginTop="7dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_accountName"/>
+      android:id="@+id/from_date"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="7dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/txt_accountName" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SELECT DATE"
-        android:id="@+id/btn_fromDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/from_date"/>
+      android:id="@+id/btn_fromDate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="SELECT DATE"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="@id/from_date" />
 
     <EditText
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/to_date"
-        android:layout_marginTop="7dp"
-        app:layout_constraintStart_toStartOf="@id/from_date"
-        app:layout_constraintTop_toBottomOf="@id/from_date"/>
+      android:id="@+id/to_date"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="7dp"
+      app:layout_constraintStart_toStartOf="@id/from_date"
+      app:layout_constraintTop_toBottomOf="@id/from_date" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SELECT DATE"
-        android:id="@+id/btn_toDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/to_date"/>
+      android:id="@+id/btn_toDate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="SELECT DATE"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="@id/to_date" />
 
     <Spinner
-        android:id="@+id/spn_savingsGoals"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/to_date"
-        app:layout_constraintBottom_toBottomOf="@id/btn_roundUp"/>
+      android:id="@+id/spn_savingsGoals"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="@id/btn_roundUp"
+      app:layout_constraintStart_toStartOf="@id/to_date" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_roundup"
-        android:id="@+id/btn_roundUp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/to_date"/>
+      android:id="@+id/btn_roundUp"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:enabled="false"
+      android:text="@string/btn_roundup"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/to_date" />
 
     <LinearLayout
-        android:id="@+id/layout_transactions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_roundUp">
+      android:id="@+id/layout_transactions"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/btn_roundUp">
 
     </LinearLayout>
 

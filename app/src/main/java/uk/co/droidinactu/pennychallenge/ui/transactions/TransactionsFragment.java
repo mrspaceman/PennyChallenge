@@ -17,10 +17,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import org.fabiomsr.moneytextview.MoneyTextView;
 import uk.co.droidinactu.pennychallenge.MainActivity;
+import uk.co.droidinactu.pennychallenge.MyApplication;
 import uk.co.droidinactu.pennychallenge.PennySavingsWorker;
 import uk.co.droidinactu.pennychallenge.R;
 import uk.co.droidinactu.pennychallenge.starling.Account;
 import uk.co.droidinactu.pennychallenge.starling.AccountBalance;
+import uk.co.droidinactu.pennychallenge.starling.SavingsGoal;
 import uk.co.droidinactu.pennychallenge.starling.Transaction;
 import uk.co.droidinactu.pennychallenge.ui.dashboard.DashboardViewModel;
 
@@ -76,6 +78,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
 
     btnFromDatePicker.setOnClickListener(this);
     btnToDatePicker.setOnClickListener(this);
+    btnRoundup.setOnClickListener(this);
 
     fromDate = LocalDateTime.now().minus(7, java.time.temporal.ChronoUnit.DAYS);
     txtFromDate.setText(
@@ -102,9 +105,11 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 txt_accountBalance.setAmount(amountInPence);
               }
               if (Float.parseFloat(btnRoundup.getTag().toString()) <= txt_accountBalance.getAmount()
-                  && spn_savingsGoals.getAdapter().getCount() > 0) {
+                  && (spn_savingsGoals.getAdapter() != null
+                      && spn_savingsGoals.getAdapter().getCount() > 0)) {
                 btnRoundup.setEnabled(true);
               } else {
+                btnRoundup.setText(getString(R.string.btn_roundup));
                 btnRoundup.setEnabled(false);
               }
             });
@@ -138,9 +143,11 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 btnRoundup.setText(getString(R.string.btn_roundup) + (roundUpAmount / 100));
                 btnRoundup.setTag(roundUpAmount / 100);
                 if ((roundUpAmount / 100) <= txt_accountBalance.getAmount()
+                    && spn_savingsGoals.getAdapter() != null
                     && spn_savingsGoals.getAdapter().getCount() > 0) {
                   btnRoundup.setEnabled(true);
                 } else {
+                  btnRoundup.setText(getString(R.string.btn_roundup));
                   btnRoundup.setEnabled(false);
                 }
               }
@@ -182,9 +189,11 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                 spn_savingsGoals.setAdapter(adapter);
               }
               if (Float.parseFloat(btnRoundup.getTag().toString()) <= txt_accountBalance.getAmount()
+                  && spn_savingsGoals.getAdapter() != null
                   && spn_savingsGoals.getAdapter().getCount() > 0) {
                 btnRoundup.setEnabled(true);
               } else {
+                btnRoundup.setText(getString(R.string.btn_roundup));
                 btnRoundup.setEnabled(false);
               }
             });
@@ -249,13 +258,15 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
               new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  toDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                  toDate = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
                   txtToDate.setText(
                       toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
                   if (fromDate.isBefore(toDate)) {
                     dashboardViewModel.loadTransactions(account, fromDate, toDate);
                   } else {
                     tLayout.removeAllViews();
+                    btnRoundup.setText(getString(R.string.btn_roundup));
+                    btnRoundup.setEnabled(false);
                   }
                 }
               },
@@ -273,7 +284,7 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
               new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  fromDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                  fromDate = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
                   txtFromDate.setText(
                       fromDate.getDayOfMonth()
                           + " "
@@ -284,6 +295,8 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
                     dashboardViewModel.loadTransactions(account, fromDate, toDate);
                   } else {
                     tLayout.removeAllViews();
+                    btnRoundup.setText(getString(R.string.btn_roundup));
+                    btnRoundup.setEnabled(false);
                   }
                 }
               },
@@ -293,8 +306,19 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
       datePickerDialog.show();
       datePickerDialog.show();
     } else if (v == btnRoundup) {
-      // FIXME : do roundups
       Log.d(MainActivity.TAG, "TransactionsFragment::onClick() - btnRoundup");
+      MyApplication myApp = (MyApplication) getActivity().getApplication();
+      int amountToSave = (int) (Float.parseFloat(btnRoundup.getTag().toString()) * 100);
+      SavingsGoal savingsGoal =
+          dashboardViewModel.getSavingsGoal(spn_savingsGoals.getSelectedItem().toString());
+      if (savingsGoal != null) {
+        myApp
+            .getThreadPoolExecutor()
+            .execute(
+                () ->
+                    dashboardViewModel.addMoneyToSavingsGoal(
+                        account, savingsGoal, accountBalance, amountToSave));
+      }
     }
   }
 }

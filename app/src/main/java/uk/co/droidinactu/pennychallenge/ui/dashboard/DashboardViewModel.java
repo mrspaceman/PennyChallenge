@@ -231,6 +231,25 @@ public class DashboardViewModel extends AndroidViewModel {
     return starlingSavingsGoals;
   }
 
+  public SavingsGoal getSavingsGoal(String name) {
+    for (SavingsGoal sg : starlingSavingsGoals.getValue().getSavingsGoals()) {
+      if (sg.getName().equals(name)) {
+        return sg;
+      }
+    }
+    return null;
+  }
+
+  public void addMoneyToSavingsGoal(
+      Account account, SavingsGoal savingsGoal, AccountBalance accountBalance, int amountToSave) {
+    if (accountBalance.getEffectiveBalance().getMinorUnits() < amountToSave) {
+      Log.e(MainActivity.TAG, "DashboardFragment::makePennyPayments() penny savings up to date");
+    } else {
+      sendMoneyToSavingsGoal(account, savingsGoal, amountToSave);
+      //     sendNotification(amountToSave);
+    }
+  }
+
   public void addMoneyToSavingsGoal(
       Account account,
       SavingsGoal savingsGoal,
@@ -617,7 +636,7 @@ public class DashboardViewModel extends AndroidViewModel {
       jsonBody.put("minorUnits", amountInPence);
       jsonBodyAmt.put("amount", jsonBody);
     } catch (JSONException e) {
-      Log.v(MainActivity.TAG, "addMoneyToSavingsGoal() creating body " + e.toString());
+      Log.v(MainActivity.TAG, "sendMoneyToSavingsGoal() creating body " + e.toString());
     }
     final String requestBody = jsonBodyAmt.toString();
 
@@ -627,12 +646,16 @@ public class DashboardViewModel extends AndroidViewModel {
             url,
             null,
             response -> {
-              Log.v(MainActivity.TAG, "onResponse() " + response.toString());
+              Log.v(
+                  MainActivity.TAG,
+                  "sendMoneyToSavingsGoal()::onResponse() " + response.toString());
               //   SavingsGoals savingsGoals = parseSavingsGoals(jsonObj);
               readAccounts();
             },
             error -> {
-              Log.v(MainActivity.TAG, "onErrorResponse() " + error.toString());
+              Log.v(
+                  MainActivity.TAG,
+                  "sendMoneyToSavingsGoal()::onErrorResponse() " + error.toString());
               //   Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
             }) {
 

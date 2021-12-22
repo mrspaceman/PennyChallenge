@@ -126,7 +126,7 @@ public class DashboardFragment extends Fragment {
                 if (!pennyChallengeFound) {
                   Log.v(
                       MainActivity.TAG,
-                      "DashboardFragment::setupDataRetrieval() pennyChallengeFound is false: creating new sabings goal");
+                      "DashboardFragment::setupDataRetrieval() pennyChallengeFound is false: creating new savings goal");
                   CurrencyAndAmount newTargetAmount = new CurrencyAndAmount();
                   newTargetAmount.setCurrency(account.getCurrency());
                   newTargetAmount.setMinorUnits(65000);
