@@ -8,7 +8,6 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
 /captures
 .externalNativeBuild
 .cxx
@@ -16,7 +15,6 @@ local.properties
 app/src/main/res/assets/keys
 app/src/main/assets/keys
 /app/schemas/uk.co.droidinactu.pennychallenge.database.AppDatabase/
-service-calls.rest
 /build
 /src/main/assets/keys
 /.idea/httpRequests/

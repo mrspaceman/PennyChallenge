@@ -363,8 +363,6 @@ public class PennySavingsWorker extends Worker {
     return savingsGoals;
   }
 
-  private void roundUpTRansactions() {}
-
   public void makePennyPayments(
       Account account, AccountBalance accountBalance, SavingsGoal savingsGoal, AppDatabase db) {
     Log.v(MainActivity.TAG, "PennySavingsWorker::makePennyPayments()");

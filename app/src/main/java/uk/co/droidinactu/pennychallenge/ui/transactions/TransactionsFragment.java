@@ -181,14 +181,9 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
             savingGoals -> {
               if (savingGoals != null) {
                 ArrayList<String> savingsGoalNames = new ArrayList<>();
-                savingGoals
-                    .getSavingsGoals()
-                    .forEach(
-                        sg -> {
-                          savingsGoalNames.add(sg.getName());
-                        });
+                savingGoals.getSavingsGoals().forEach(sg -> savingsGoalNames.add(sg.getName()));
                 ArrayAdapter<String> adapter =
-                    new ArrayAdapter<String>(
+                    new ArrayAdapter<>(
                         this.getContext(), android.R.layout.simple_spinner_item, savingsGoalNames);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spn_savingsGoals.setAdapter(adapter);
@@ -260,19 +255,16 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
       DatePickerDialog datePickerDialog =
           new DatePickerDialog(
               this.getContext(),
-              new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  toDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
-                  txtToDate.setText(
-                      toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
-                  if (fromDate.isBefore(toDate)) {
-                    dashboardViewModel.loadTransactions(account, fromDate, toDate);
-                  } else {
-                    tLayout.removeAllViews();
-                    btnRoundup.setText(getString(R.string.btn_roundup));
-                    btnRoundup.setEnabled(false);
-                  }
+              (view, year, monthOfYear, dayOfMonth) -> {
+                toDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                txtToDate.setText(
+                    toDate.getDayOfMonth() + " " + toDate.getMonth() + " " + toDate.getYear());
+                if (fromDate.isBefore(toDate)) {
+                  dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                } else {
+                  tLayout.removeAllViews();
+                  btnRoundup.setText(getString(R.string.btn_roundup));
+                  btnRoundup.setEnabled(false);
                 }
               },
               toDate.getYear(),
@@ -284,23 +276,20 @@ public class TransactionsFragment extends Fragment implements View.OnClickListen
       DatePickerDialog datePickerDialog =
           new DatePickerDialog(
               this.getContext(),
-              new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                  fromDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
-                  txtFromDate.setText(
-                      fromDate.getDayOfMonth()
-                          + " "
-                          + fromDate.getMonth()
-                          + " "
-                          + fromDate.getYear());
-                  if (fromDate.isBefore(toDate)) {
-                    dashboardViewModel.loadTransactions(account, fromDate, toDate);
-                  } else {
-                    tLayout.removeAllViews();
-                    btnRoundup.setText(getString(R.string.btn_roundup));
-                    btnRoundup.setEnabled(false);
-                  }
+              (view, year, monthOfYear, dayOfMonth) -> {
+                fromDate = LocalDateTime.of(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                txtFromDate.setText(
+                    fromDate.getDayOfMonth()
+                        + " "
+                        + fromDate.getMonth()
+                        + " "
+                        + fromDate.getYear());
+                if (fromDate.isBefore(toDate)) {
+                  dashboardViewModel.loadTransactions(account, fromDate, toDate);
+                } else {
+                  tLayout.removeAllViews();
+                  btnRoundup.setText(getString(R.string.btn_roundup));
+                  btnRoundup.setEnabled(false);
                 }
               },
               fromDate.getYear(),
